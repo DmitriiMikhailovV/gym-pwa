@@ -9,7 +9,7 @@ interface StatsCalendarProps {
 }
 
 export const StatsCalendar = ({ month, year, completedDates, onDayClick }: StatsCalendarProps) => {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const getDaysInMonth = (m: number, y: number) => {
     return new Date(y, m + 1, 0).getDate()
@@ -38,7 +38,7 @@ export const StatsCalendar = ({ month, year, completedDates, onDayClick }: Stats
       </Typography>
       <Card sx={{ bgcolor: 'background.paper', borderRadius: '12px', p: 2 }}>
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1, mb: 1 }}>
-          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+          {(t('stats.weekDaysShort', { returnObjects: true }) as string[]).map((day, i) => (
             <Typography
               key={i}
               variant="caption"

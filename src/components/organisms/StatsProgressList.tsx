@@ -118,8 +118,8 @@ export const StatsProgressList = ({ exercises }: StatsProgressListProps) => {
                       dataKey="date"
                       tick={{ fontSize: 10 }}
                       tickFormatter={(val) => {
-                        const d = new Date(val)
-                        return `${d.getDate()}.${d.getMonth() + 1}`
+                        const [, m, d] = val.split('-')
+                        return `${parseInt(d)}.${parseInt(m)}`
                       }}
                       stroke="rgba(255,255,255,0.3)"
                     />

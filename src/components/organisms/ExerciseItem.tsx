@@ -59,6 +59,13 @@ export const ExerciseItem = ({ exercise, onDelete }: ExerciseItemProps) => {
   }
 
   const handleDeleteSet = async (setId: number) => {
+    const set = await db.sets.get(setId)
+    if (set && set.supabaseId) {
+      await db.deletedRecords.add({
+        tableName: 'sets',
+        supabaseId: set.supabaseId,
+      })
+    }
     await db.sets.delete(setId)
   }
 

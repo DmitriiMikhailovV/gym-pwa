@@ -88,6 +88,7 @@ const resources = {
         deleteDayConfirm:
           'All sets completed on this day will be deleted. This action cannot be undone.',
         delete: 'Delete',
+        weekDaysShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       },
       auth: {
         gymTracker: 'GymTracker',
@@ -215,6 +216,7 @@ const resources = {
         deleteDayConfirm:
           'Все подходы, выполненные в этот день, будут удалены. Это действие необратимо.',
         delete: 'Удалить',
+        weekDaysShort: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
       },
       auth: {
         gymTracker: 'GymTracker',
@@ -342,6 +344,7 @@ const resources = {
         deleteDayConfirm:
           'Všechny série dokončené v tento den budou smazány. Tuto akci nelze vrátit zpět.',
         delete: 'Smazat',
+        weekDaysShort: ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'],
       },
       auth: {
         gymTracker: 'GymTracker',

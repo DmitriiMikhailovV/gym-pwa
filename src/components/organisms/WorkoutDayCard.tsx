@@ -81,7 +81,28 @@ export const WorkoutDayCard = ({
   }
 
   const handleDeleteExercise = async (exerciseId: number) => {
+    const exercise = await db.exercises.get(exerciseId)
+    if (!exercise) return
+
+    // Track sets deletion
+    const sets = await db.sets.where('exerciseId').equals(exerciseId).toArray()
+    for (const set of sets) {
+      if (set.supabaseId) {
+        await db.deletedRecords.add({
+          tableName: 'sets',
+          supabaseId: set.supabaseId,
+        })
+      }
+    }
     await db.sets.where('exerciseId').equals(exerciseId).delete()
+
+    // Track exercise deletion
+    if (exercise.supabaseId) {
+      await db.deletedRecords.add({
+        tableName: 'exercises',
+        supabaseId: exercise.supabaseId,
+      })
+    }
     await db.exercises.delete(exerciseId)
   }
 

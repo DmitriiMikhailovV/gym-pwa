@@ -53,7 +53,10 @@ export const StatisticsPage = () => {
 
       const setsByDate: Record<string, typeof exLogs> = {}
       exLogs.forEach((l) => {
-        const date = new Date(l.date).toISOString().split('T')[0]
+        const d = new Date(l.date)
+        const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+          d.getDate()
+        ).padStart(2, '0')}`
         if (!setsByDate[date]) setsByDate[date] = []
         setsByDate[date].push(l)
       })
@@ -131,8 +134,14 @@ export const StatisticsPage = () => {
       return key === targetDateKey
     })
 
-    await db.transaction('rw', db.workoutLogs, async () => {
+    await db.transaction('rw', db.workoutLogs, db.deletedRecords, async () => {
       for (const log of logsToDelete) {
+        if (log.supabaseId) {
+          await db.deletedRecords.add({
+            tableName: 'workout_logs',
+            supabaseId: log.supabaseId,
+          })
+        }
         await db.workoutLogs.delete(log.id!)
       }
     })

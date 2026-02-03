@@ -126,6 +126,20 @@ export async function syncWithSupabase(userId: string) {
 
     await cleanupLocalDuplicates(userId)
 
+    const deletedRecords = await db.deletedRecords.toArray()
+    if (deletedRecords.length > 0) {
+      console.log(`🗑 Processing ${deletedRecords.length} deletions...`)
+      for (const record of deletedRecords) {
+        const { error } = await supabase.from(record.tableName).delete().eq('id', record.supabaseId)
+
+        if (!error) {
+          await db.deletedRecords.delete(record.id!)
+        } else {
+          console.error(`❌ Error deleting ${record.tableName} ${record.supabaseId}:`, error)
+        }
+      }
+    }
+
     const { data: remoteDays, error: daysError } = await supabase
       .from('workout_days')
       .select('*')

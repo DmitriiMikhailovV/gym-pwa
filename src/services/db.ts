@@ -34,16 +34,24 @@ export class GymTrackerDB extends Dexie {
   exercises!: Table<Exercise>
   sets!: Table<ExerciseSet>
   workoutLogs!: Table<WorkoutLog>
+  deletedRecords!: Table<DeletedRecord>
 
   constructor() {
     super('GymTrackerDB')
-    this.version(5).stores({
+    this.version(6).stores({
       workoutDays: '++id, name, userId, createdAt, supabaseId',
       exercises: '++id, workoutDayId, order, supabaseId',
       sets: '++id, exerciseId, completedAt, supabaseId',
       workoutLogs: '++id, exerciseId, date, supabaseId',
+      deletedRecords: '++id, tableName, supabaseId',
     })
   }
+}
+
+export interface DeletedRecord {
+  id?: number
+  tableName: 'workout_days' | 'exercises' | 'sets' | 'workout_logs'
+  supabaseId: number
 }
 
 export interface WorkoutLog {

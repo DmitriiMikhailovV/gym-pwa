@@ -101,14 +101,39 @@ export const App = () => {
   const workoutDays = useLiveQuery(() => db.workoutDays.reverse().toArray()) || []
 
   const handleDeleteWorkoutDay = async (id: number) => {
+    const day = await db.workoutDays.get(id)
+    if (!day) return
+
     const exercises = await db.exercises.where('workoutDayId').equals(id).toArray()
 
     for (const exercise of exercises) {
+      const sets = await db.sets.where('exerciseId').equals(exercise.id!).toArray()
+      for (const set of sets) {
+        if (set.supabaseId) {
+          await db.deletedRecords.add({
+            tableName: 'sets',
+            supabaseId: set.supabaseId,
+          })
+        }
+      }
       await db.sets.where('exerciseId').equals(exercise.id!).delete()
+
+      if (exercise.supabaseId) {
+        await db.deletedRecords.add({
+          tableName: 'exercises',
+          supabaseId: exercise.supabaseId,
+        })
+      }
     }
 
     await db.exercises.where('workoutDayId').equals(id).delete()
 
+    if (day.supabaseId) {
+      await db.deletedRecords.add({
+        tableName: 'workout_days',
+        supabaseId: day.supabaseId,
+      })
+    }
     await db.workoutDays.delete(id)
   }
 
