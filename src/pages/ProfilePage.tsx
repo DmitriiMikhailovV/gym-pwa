@@ -80,7 +80,7 @@ export const ProfilePage = () => {
           GymTracker
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {t('profile.version')} 1.0.0
+          {t('profile.version')} {__APP_VERSION__}
         </Typography>
       </Box>
     </Box>
