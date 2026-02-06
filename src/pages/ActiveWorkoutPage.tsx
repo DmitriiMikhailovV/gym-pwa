@@ -65,7 +65,6 @@ export const ActiveWorkoutPage = ({
         progress={progress}
         completedCount={completedCount}
         totalExercises={totalExercises}
-        onClose={onClose}
         onTimerClick={() => setTimerDialog(true)}
       />
 

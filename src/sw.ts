@@ -1,12 +1,32 @@
-/// <reference lib="webworker" />
-import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching'
+import {
+  precacheAndRoute,
+  cleanupOutdatedCaches,
+  createHandlerBoundToURL,
+} from 'workbox-precaching'
 import { clientsClaim } from 'workbox-core'
+import { NavigationRoute, registerRoute } from 'workbox-routing'
 
 declare const self: ServiceWorkerGlobalScope
 
 // 1. Standard PWA Caching
 precacheAndRoute(self.__WB_MANIFEST)
 cleanupOutdatedCaches()
+
+// 1.1 SPA Navigation Fallback (The Fix for "Lie-Fi" / Bad Connection)
+// This tells the SW: "If the user navigates to ANY page, just give them the cached index.html immediately."
+// This prevents the browser from trying to fetch the route from the network and hanging.
+// Ensure 'index.html' is handled by checking the manifest or creating a handler.
+// Typically in Vite PWA, index.html is in the manifest.
+const handler = createHandlerBoundToURL('/index.html')
+const navigationRoute = new NavigationRoute(handler, {
+  denylist: [
+    // Exclude API calls or other non-navigation URLs if necessary
+    /^\/api\//,
+    /^\/supabase\//, // If you have Supabase specialized routes
+  ],
+})
+registerRoute(navigationRoute)
+
 clientsClaim()
 self.skipWaiting()
 

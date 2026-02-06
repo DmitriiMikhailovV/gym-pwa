@@ -7,7 +7,7 @@ interface ActiveWorkoutHeaderProps {
   progress: number
   completedCount: number
   totalExercises: number
-  onClose: () => void
+  onClose?: () => void
   onTimerClick: () => void
 }
 
@@ -24,9 +24,11 @@ export const ActiveWorkoutHeader = ({
   return (
     <AppBar position="sticky" color="transparent" elevation={0} sx={{ top: 0 }}>
       <Toolbar>
-        <IconButton edge="start" onClick={onClose}>
-          <ArrowBack />
-        </IconButton>
+        {onClose && (
+          <IconButton edge="start" onClick={onClose}>
+            <ArrowBack />
+          </IconButton>
+        )}
         <Box sx={{ flex: 1, ml: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             {workoutName}

@@ -137,6 +137,15 @@ export const App = () => {
     await db.workoutDays.delete(id)
   }
 
+  useEffect(() => {
+    const savedWorkoutId = localStorage.getItem('activeWorkoutId')
+    const savedWorkoutName = localStorage.getItem('activeWorkoutName')
+    if (savedWorkoutId && savedWorkoutName) {
+      setActiveWorkoutId(parseInt(savedWorkoutId))
+      setActiveWorkoutName(savedWorkoutName)
+    }
+  }, [])
+
   if (!session) {
     return <AuthPage />
   }
@@ -149,6 +158,8 @@ export const App = () => {
         onClose={() => {
           setActiveWorkoutId(null)
           setActiveWorkoutName('')
+          localStorage.removeItem('activeWorkoutId')
+          localStorage.removeItem('activeWorkoutName')
         }}
         userId={session.user.id}
       />
@@ -160,11 +171,24 @@ export const App = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
+        height: '100dvh',
+        width: '100vw',
         bgcolor: 'background.default',
+        overflow: 'hidden',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overscrollBehavior: 'none',
       }}
     >
-      <AppBar position="sticky" color="transparent" elevation={0} sx={{ top: 0 }}>
+      <AppBar
+        position="static"
+        color="transparent"
+        elevation={0}
+        sx={{ pt: 'env(safe-area-inset-top)' }}
+      >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Box sx={{ width: 48, display: 'flex', justifyContent: 'center' }}>
             {isSyncing && <CircularProgress size={20} color="secondary" thickness={5} />}
@@ -188,8 +212,18 @@ export const App = () => {
         sx={{
           flexGrow: 1,
           overflowY: 'auto',
+          overflowX: 'hidden',
           py: 2,
-          pb: 'calc(96px + env(safe-area-inset-bottom))',
+          // Using a larger padding to ensure content isn't hidden behind the fixed bottom bar
+          pb: 'calc(16px + env(safe-area-inset-bottom))',
+          // Scrollbar styling for better UX
+          '&::-webkit-scrollbar': {
+            width: '4px',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            borderRadius: '4px',
+          },
         }}
       >
         {value === 0 && (
@@ -226,6 +260,8 @@ export const App = () => {
                   onStartWorkout={() => {
                     setActiveWorkoutId(day.id!)
                     setActiveWorkoutName(day.name)
+                    localStorage.setItem('activeWorkoutId', day.id!.toString())
+                    localStorage.setItem('activeWorkoutName', day.name)
                   }}
                 />
               ))
@@ -240,7 +276,7 @@ export const App = () => {
       {value === 0 && (
         <Box
           sx={{
-            position: 'fixed',
+            position: 'absolute',
             bottom: 'calc(100px + env(safe-area-inset-bottom))',
             right: 20,
             zIndex: 2,
@@ -263,14 +299,11 @@ export const App = () => {
 
       <Box
         sx={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
           zIndex: 1,
           bgcolor: 'background.paper',
+          borderTop: '1px solid',
+          borderColor: 'divider',
           pb: 'env(safe-area-inset-bottom)',
-          boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.1)',
         }}
       >
         <BottomNavigation
